@@ -17,6 +17,10 @@ My initial thoughts are:
  - get a flat list of filepaths with filesizes (that might be a map)
  - group by filesize - those are duplicate candidates (dupicates are files with same content - hence **filesize must be identical**)
  - for all files in the same size group compare contents
+ - stick to the clojure philisophy of operating on raw data
+ - main function is the orchestrator and communicates with modules using a map containing keys: 
+    - `error` (which is populated in case of error with `message` and `code`)
+    - `result` successful result of function call
  
 ###Points to consider:
 
