@@ -21,6 +21,7 @@ My initial thoughts are:
  - main function is the orchestrator and communicates with modules using a map containing keys: 
     - `error` (which is populated in case of error with `message` and `code`)
     - `result` successful result of function call
+ - what do I do with that __MACOSX trash directory? manual exclusion seems a bit brittle..
  
 ###Points to consider:
 
