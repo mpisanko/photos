@@ -28,9 +28,26 @@
            counter 0]
       (if-let [entry-name (some-> zip-entry .getName)]
         (let [dir? (.isDirectory zip-entry)]
-         (if dir?
-           (.mkdirs (File. (path directory entry-name)))
-           (with-open [out-stream (FileOutputStream. (File. (path directory entry-name)))]
-             (io/copy zip-stream out-stream)))
-         (recur (.getNextEntry zip-stream) (if dir? counter (inc counter))))
+          (if dir?
+            (.mkdirs (File. (path directory entry-name)))
+            (with-open [out-stream (FileOutputStream. (File. (path directory entry-name)))]
+              (io/copy zip-stream out-stream)))
+          (recur (.getNextEntry zip-stream) (if dir? counter (inc counter))))
         {:result counter}))))
+
+(defn- file-and-size [file]
+  [(.getPath file) (.length file)])
+
+(defn- files-seq [directory]
+  (let [contents (.listFiles directory)
+        files (remove #(.isDirectory %) contents)
+        dirs (filter #(.isDirectory %) contents)]
+    (lazy-seq
+      (concat
+        files
+        (mapcat files-seq dirs)))))
+
+(defn files-with-sizes
+  "Returns a map of every filename to its byte size in given directory"
+  [directory]
+  {:result (map file-and-size (files-seq (File. directory)))})

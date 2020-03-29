@@ -20,8 +20,10 @@
    (if-not (.exists (io/as-file filepath))
      (exit-with-error (str "The file '" filepath "' does not exist") 2)
      (let [workspace (result-or-exit-with-error (workspace/create))
-           unzipped (result-or-exit-with-error (workspace/unzip filepath workspace))]
-      (println "File" workspace "unzipped" unzipped "entries")))
+           unzipped (result-or-exit-with-error (workspace/unzip filepath workspace))
+           file-sizes (result-or-exit-with-error (workspace/files-with-sizes workspace))
+           files->sizes (into {} file-sizes)]
+      (println "Workspace" workspace "unzipped" unzipped "entries" files->sizes)))
    (catch Throwable t
      (exit-with-error (str "Encountered problem " (.getMessage t)) 3))))
 
