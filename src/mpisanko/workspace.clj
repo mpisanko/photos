@@ -1,22 +1,17 @@
 (ns mpisanko.workspace
-  (:require [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import (java.io File FileOutputStream)
-           (java.util UUID)
+  (:require [clojure.java.io :as io])
+  (:import (java.util UUID)
            (java.util.zip ZipInputStream)))
-
-(defn- path [& segments]
-  (str/join File/separatorChar segments))
 
 (defn create
   "Create work directory in system's temporary directory"
   []
   (let [tmp (if (seq (System/getProperty "java.io.tmpdir"))
               (System/getProperty "java.io.tmpdir")
-              (path "." "tmp"))
-        workspace (path tmp "photos" (UUID/randomUUID))]
-    (if (.mkdirs (File. workspace))
-      {:result workspace}
+              "./tmp")
+        workspace (io/file tmp "photos" (str (UUID/randomUUID)))]
+    (if (.mkdirs workspace)
+      {:result (.getPath workspace)}
       {:error {:message (str "No write access in temporary directory: " workspace)
                :code    4}})))
 
@@ -29,25 +24,8 @@
       (if-let [entry-name (some-> zip-entry .getName)]
         (let [dir? (.isDirectory zip-entry)]
           (if dir?
-            (.mkdirs (File. (path directory entry-name)))
-            (with-open [out-stream (FileOutputStream. (File. (path directory entry-name)))]
-              (io/copy zip-stream out-stream)))
+            (.mkdirs (io/file directory entry-name))
+            (io/copy zip-stream (io/file directory entry-name)))
           (recur (.getNextEntry zip-stream) (if dir? counter (inc counter))))
         {:result counter}))))
 
-(defn- file-and-size [file]
-  [(.getPath file) (.length file)])
-
-(defn- files-seq [directory]
-  (let [contents (.listFiles directory)
-        files (remove #(.isDirectory %) contents)
-        dirs (filter #(.isDirectory %) contents)]
-    (lazy-seq
-      (concat
-        files
-        (mapcat files-seq dirs)))))
-
-(defn files-with-sizes
-  "Returns a map of every filename to its byte size in given directory"
-  [directory]
-  {:result (map file-and-size (files-seq (File. directory)))})

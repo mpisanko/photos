@@ -27,9 +27,3 @@
     (let [{:keys [result error]} (workspace/unzip "test/resources/test.zip" "./tmp/photos/test")]
       (is (nil? error))
       (is (= 7 result)))))
-
-(deftest files-with-sizes
-  (testing "directory with single file"
-    (let [{:keys [result error]} (workspace/files-with-sizes "test/resources")]
-      (is (nil? error))
-      (is (= [["test/resources/test.zip" 2642]] result)))))
