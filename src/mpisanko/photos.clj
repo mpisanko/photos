@@ -21,10 +21,10 @@
   (if (.startsWith filepath root) (subs filepath (inc (count root))) filepath))
 
 (defn- report [workspace unzipped dupes]
-  (println (format "Extracted %s files into %s. Found following duplicates:\n\n%s"
-                   unzipped workspace (str/join "\n\n\n" (map
-                                                           (partial str/join "\n")
-                                                           dupes)))))
+  (println
+    (format "\n\nExtracted %s files into %s. Found %s duplicated photos:\n\n%s\n\n"
+            unzipped workspace (count dupes)
+            (str/join "\n\n\n" (map (partial str/join "\n") dupes)))))
 
 (defn- process [filepath]
   (try
