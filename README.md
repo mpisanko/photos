@@ -46,7 +46,8 @@ This approach does not take filenames into account
 
 ## Installation
 
-Download from https://github.com/mpisanko/photos
+Download from https://github.com/mpisanko/photos.
+This project is written in `clojure` and requires Java 8+ be installed. To build install [clojure](https://clojure.org/guides/getting_started#_clojure_installer_and_cli_tools)
 
 ## Usage
 
