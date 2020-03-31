@@ -24,8 +24,8 @@
 (deftest candidates-test
   (testing "returns groups of files of the same size"
     (is (= {123 ["/a/b" "/a/c"]
-            234 ["/d/e"]})
-        (:result (duplicate/candidates [["/a/b" 123] ["/d/e" 234] ["/a/c" 123]]))))
+            234 ["/d/e"]}
+           (:result (duplicate/candidates [["/a/b" 123] ["/d/e" 234] ["/a/c" 123]])))))
 
   (testing "discards empty files"
     (is (empty? (:result (duplicate/candidates [["/dev/null" 0]]))))))
