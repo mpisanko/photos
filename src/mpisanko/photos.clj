@@ -18,13 +18,27 @@
     (exit-with-error error)))
 
 (defn- strip-root [root filepath]
-  (if (.startsWith filepath root) (subs filepath (inc (count root))) filepath))
+  (if (.startsWith filepath root)
+    (subs filepath (inc (count root)))
+    filepath))
+
+(defn- remove-workspace-prefix [workspace dupes]
+  (map #(map (partial strip-root workspace) %) dupes))
+
+(defn- duplicate-groups-with-numbers [dupes]
+  (->> dupes
+       (map (partial str/join "\n"))
+       (interleave (drop 1 (range)))
+       (partition 2)
+       (map (partial str/join ".\n"))
+       (str/join "\n\n\n")))
 
 (defn- report [workspace unzipped dupes]
   (println
-    (format "\n\nExtracted %s files into %s. Found %s duplicated photos:\n\n%s\n\n"
+    (format "\n\nExtracted %s files into %s. Found %s duplicate photos:\n\n%s\n\n"
             unzipped workspace (count dupes)
-            (str/join "\n\n\n" (map (partial str/join "\n") dupes)))))
+            (duplicate-groups-with-numbers
+              (remove-workspace-prefix workspace dupes)))))
 
 (defn- process [filepath]
   (try
@@ -34,9 +48,8 @@
             unzipped (result-or-exit-with-error (workspace/unzip filepath workspace))
             file-sizes (result-or-exit-with-error (duplicate/files-with-sizes workspace))
             candidates (result-or-exit-with-error (duplicate/candidates file-sizes))
-            dupes (remove nil? (mapcat duplicate/find' candidates))
-            dupes-stripped-workspace (map #(map (partial strip-root workspace) %) dupes)]
-        (report workspace unzipped dupes-stripped-workspace)))
+            dupes (remove nil? (mapcat duplicate/find' candidates))]
+        (report workspace unzipped dupes)))
     (catch Throwable t
       (exit-with-error (.getMessage t) 3))))
 
