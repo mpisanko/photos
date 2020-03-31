@@ -23,8 +23,9 @@
      (let [workspace (result-or-exit-with-error (workspace/create))
            unzipped (result-or-exit-with-error (workspace/unzip filepath workspace))
            file-sizes (result-or-exit-with-error (duplicate/files-with-sizes workspace))
-           files->sizes (into {} file-sizes)]
-      (println "Workspace" workspace "unzipped" unzipped "entries" files->sizes)))
+           candidates (result-or-exit-with-error (duplicate/candidates file-sizes))
+           dupes (map duplicate/find' candidates)]
+      (println "Workspace" workspace "unzipped" unzipped "entries" candidates "dupes\n" dupes)))
    (catch Throwable t
      (exit-with-error (.getMessage t) 3))))
 
