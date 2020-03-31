@@ -26,11 +26,12 @@ My initial thoughts are:
  
 After writing:
  - the approached worked well 
- - decided to keep the __MACOSX in report, this can be dealt with by piping output through `grep -v '__MACOSX'` 
+ - decided to keep the __MACOSX in report, this can be dealt with by piping output through `grep -v '__MACOSX'`
+ - could add another commandline option to exclude certain paths 
  
-###Points to consider:
+### Points to consider:
 
-#### very big input (bigger than available memory)
+##### very big input (bigger than available memory)
  The uncompressed files can be split into partitions, for each partition we output result of grouping files by size, sorted by size. 
  Those intermediate results are then split into groups containing size groups up to a limit (eg: up to 1MB, 5MB, etc - depending of input size).
  The groups in each threshold are merged into single file, sorted and can then be procesed.
