@@ -8,8 +8,8 @@
      (with-redefs [photos/exit-with-error (fn [msg c]
                                               (reset! exit-values {:msg msg :code c}))]
        (#'photos/process "CHALLENGE.md")
-       (is (nil? (-> exit-values deref :code)))
-       (is (nil? (-> exit-values deref :msg)))))))
+       (is (nil? (:code @exit-values)))
+       (is (nil? (:msg @exit-values)))))))
 
 (deftest strip-root-test
   (is (= "bar/baz"

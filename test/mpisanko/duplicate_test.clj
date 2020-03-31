@@ -40,10 +40,10 @@
       (is (= (set (map set (reference/combinations coll 2)))
              (#'duplicate/pairs coll))))))
 
-(deftest find'-test
+(deftest find-single-test
   (testing "just two identical files"
     (is (empty?
-          (duplicate/find' [7058 ["test/resources/duplicates/low-tide.jpg"
+          (#'duplicate/find-single [7058 ["test/resources/duplicates/low-tide.jpg"
                                   "test/resources/duplicates/sf-super-duper.jpg"]]))))
   (testing "two identical files repeated three times"
     (is (= (map sort
@@ -53,7 +53,7 @@
                  ["test/resources/duplicates/sf-dupe.jpg"
                   "test/resources/duplicates/sf.jpg"
                   "test/resources/duplicates/sf-super-duper.jpg"]])
-           (duplicate/find' [7058 ["test/resources/duplicates/low-tide.jpg"
+           (#'duplicate/find-single [7058 ["test/resources/duplicates/low-tide.jpg"
                                    "test/resources/duplicates/lo-tide.jpg"
                                    "test/resources/duplicates/low-tide-dupe.jpg"
                                    "test/resources/duplicates/sf.jpg"

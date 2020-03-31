@@ -69,10 +69,15 @@
       []
       parts)))
 
-(defn find'
+(defn- find-single
   "Find duplicate files in a group of same sized files"
   [[byte-length candidates]]
   (let [dupes (filter
                 (partial same-content? byte-length)
                 (map (comp sort vec) (pairs candidates)))]
     (seq (de-dupe dupes))))
+
+(defn find'
+  "Find duplicate files in all groups of same sized files"
+  [dupes]
+  {:result (remove nil? (mapcat find-single (seq dupes)))})
