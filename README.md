@@ -1,4 +1,4 @@
-# photo duplicate detector
+# duplicate photo detector
 ### Task 
 A client merged their home photo folder with their partner's folder, with disastrous consequences. They now have a lot of duplicate photos in different places in the folder structure.
 
@@ -15,28 +15,33 @@ Need to keep in mind that the file might be very big.
 
 My initial thoughts are:
  - get a flat list of filepaths with filesizes (that might be a map)
- - group by filesize - those are duplicate candidates (dupicates are files with same content - hence **filesize must be identical**)
+ - group by filesize - those are duplicate candidates (duplicates are files with same content - hence **filesize must be identical**)
  - for all files in the same size group compare contents
  - stick to the clojure philisophy of operating on raw data
+ - also stick to UNIX philosophy of small tools doing one job well with consistent interface (so they can be composed in different ways)
  - main function is the orchestrator and communicates with modules using a map containing keys: 
     - `error` (which is populated in case of error with `message` and `code`)
     - `result` successful result of function call
  - what do I do with that __MACOSX trash directory? manual exclusion seems a bit brittle..
+ 
+After writing:
+ - the approached worked well 
+ - decided to keep the __MACOSX in report, this can be dealt with by piping output through `grep -v '__MACOSX'` 
  
 ###Points to consider:
 
 #### very big input (bigger than available memory)
  The uncompressed files can be split into partitions, for each partition we output result of grouping files by size, sorted by size. 
  Those intermediate results are then split into groups containing size groups up to a limit (eg: up to 1MB, 5MB, etc - depending of input size).
- The groups in each threshold are merged into single file, sorted and can then be procesed.    
+ The groups in each threshold are merged into single file, sorted and can then be procesed.
  
-#### three way merge
+##### three way merge
 This approach covers this scenario (comparing equally sized files' contents)
  
-#### some files had their names changed
+##### some files had their names changed
 This approach does not take filenames into account
  
-#### some files may have extension changed
+##### some files may have extension changed
 This approach does not take filenames into account
 
 ## Installation
@@ -45,8 +50,10 @@ Download from https://github.com/mpisanko/photos
 
 ## Usage
 
-This can be run as an executable java jar to which you pass photo zip archive file path. It will output filepaths of duplicate files to STDOUT (aka console ;) 
+This can be run as an executable java jar to which you pass photo zip archive file path. 
+It will print report about fduplicate files to STDOUT (aka console ;) 
 
+###### Commands below assume you're in root directory of the project
 Run the project's tests:
 
     $ clojure -A:test:runner
@@ -57,8 +64,4 @@ Build an uberjar:
 
 Run that uberjar:
 
-    $ java -jar photos.jar [filepath]
-
-## Options
-
-The only option accepted is path to the photo archive zip.
+    $ java -jar photos.jar [filepath-to-duplicate-archive]
