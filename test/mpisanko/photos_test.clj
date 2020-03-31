@@ -10,3 +10,9 @@
        (#'photos/process "CHALLENGE.md")
        (is (nil? (-> exit-values deref :code)))
        (is (nil? (-> exit-values deref :msg)))))))
+
+(deftest strip-root-test
+  (is (= "bar/baz"
+         (#'photos/strip-root "/tmp/photos/123" "/tmp/photos/123/bar/baz")))
+  (is (= "bar/baz"
+         (#'photos/strip-root "/tmp/photos/123" "bar/baz"))))

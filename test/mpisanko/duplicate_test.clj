@@ -14,7 +14,8 @@
               ["test/resources/duplicates/low-tide.jpg" 7058]
               ["test/resources/duplicates/lo-tide.jpg" 7058]
               ["test/resources/duplicates/low-tide-dupe.jpg" 7058]
-              ["test/resources/duplicates/sf-dupe.jpg" 7058]] result)))
+              ["test/resources/duplicates/sf-dupe.jpg" 7058]]
+             result)))
 
     (let [{:keys [result error]} (duplicate/files-with-sizes "resources")]
       (is (nil? error))
@@ -41,6 +42,10 @@
 
 (deftest find'-test
   (testing "just two identical files"
+    (is (empty?
+           (duplicate/find' [7058 ["test/resources/duplicates/low-tide.jpg"
+                                   "test/resources/duplicates/sf-super-duper.jpg"]]))))
+  (testing "two identical files repeated three times"
     (is (= (map sort
                 [["test/resources/duplicates/lo-tide.jpg"
                   "test/resources/duplicates/low-tide.jpg"

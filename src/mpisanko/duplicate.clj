@@ -25,7 +25,11 @@
 (defn candidates
   "Returns a map of sizes to filepaths"
   [files-with-sizes]
-  {:result (group-by second (filter (comp pos? second) files-with-sizes))})
+  {:result (reduce-kv
+             (fn [acc k v]
+               (assoc acc k (map first v)))
+             {}
+             (group-by second (filter (comp pos? second) files-with-sizes)))})
 
 (defn- pairs [coll]
   (set
@@ -71,4 +75,4 @@
   (let [dupes (filter
                 (partial same-content? byte-length)
                 (map (comp sort vec) (pairs candidates)))]
-    (de-dupe dupes)))
+    (seq (de-dupe dupes))))
